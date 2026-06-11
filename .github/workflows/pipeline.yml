@@ -2,9 +2,13 @@ name: CI Nginx Docker
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build-test:
@@ -14,6 +18,17 @@ jobs:
       - name: Récupérer le code
         uses: actions/checkout@v4
 
+      - name: Connexion GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Générer le tag SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: Vérifier les fichiers essentiels
         run: |
           test -f Dockerfile
@@ -21,7 +36,10 @@ jobs:
           test -f nginx/nginx.conf
 
       - name: Construire l'image Docker
-        run: docker build -t nginx-ci-cd-tp .
+        run: |
+          docker build \
+            -t nginx-ci-cd-tp \
+            -t ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.sha_short }} .
 
       - name: Tester la configuration Nginx
         run: docker run --rm nginx-ci-cd-tp nginx -t
@@ -36,3 +54,15 @@ jobs:
 
       - name: Tester le endpoint health
         run: curl -f http://localhost:8080/health
+
+      - name: Publier l'image dans GHCR
+        run: docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.sha_short }}
+
+  deploy-production:
+    needs: build-test
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Validation manuelle effectuée
+        run: echo "Déploiement production validé manuellement"
