@@ -1,0 +1,38 @@
+name: CI Nginx Docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Vérifier les fichiers essentiels
+        run: |
+          test -f Dockerfile
+          test -f nginx/index.html
+          test -f nginx/nginx.conf
+
+      - name: Construire l'image Docker
+        run: docker build -t nginx-ci-cd-tp .
+
+      - name: Tester la configuration Nginx
+        run: docker run --rm nginx-ci-cd-tp nginx -t
+
+      - name: Lancer le conteneur
+        run: docker run -d --name nginx-test -p 8080:80 nginx-ci-cd-tp
+
+      - name: Tester la réponse HTTP
+        run: |
+          sleep 3
+          curl -f http://localhost:8080
+
+      - name: Tester le endpoint health
+        run: curl -f http://localhost:8080/health
