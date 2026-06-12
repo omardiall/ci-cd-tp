@@ -1,11 +1,80 @@
+cat > nginx/index.html <<'EOF'
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>TP CI/CD Nginx</title>
+  <title>Le Débat du Football</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: white;
+      text-align: center;
+    }
+
+    header {
+      padding: 60px 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: white;
+      color: #111827;
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .score {
+      font-size: 70px;
+      font-weight: bold;
+      color: #dc2626;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 25px;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 50px;
+      padding: 20px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
 </head>
 <body>
-  <h1>Pipeline CI/CD avec GitHub Actions</h1>
-  <p>Application Nginx déployée avec Docker.</p>
+  <header>
+    <h1>Débat footballistique</h1>
+    <p>Une page humoristique pour tester notre pipeline CI/CD</p>
+  </header>
+
+  <section class="card">
+    <h2>Analyse très sérieuse</h2>
+    <p>Certains disent que Mbappé court plus vite que son ombre.</p>
+    <p>D'autres pensent qu'il devrait parfois passer le ballon.</p>
+    <div class="score">7/10</div>
+    <p>Verdict : excellent joueur, mais sujet parfait pour un débat entre amis.</p>
+    <a class="btn" href="/health">Tester /health</a>
+  </section>
+
+  <footer>
+    TP CI/CD — Nginx, Docker et GitHub Actions
+  </footer>
 </body>
 </html>
+EOF
